@@ -143,14 +143,13 @@ fun AtributosScreen(character: GameCharacter) {
             }
         }
     }
-
     fun updateAttributesBasedOnRace() {
-        strength = 8
-        dexterity = 8
-        constitution = 8
-        intelligence = 8
-        wisdom = 8
-        charisma = 8
+        strength = character.strength
+        dexterity = character.dexterity
+        constitution = character.constitution
+        intelligence = character.intelligence
+        wisdom = character.wisdom
+        charisma = character.charisma
 
         selectedRace.applyRaceBonus(character)
 
@@ -161,7 +160,6 @@ fun AtributosScreen(character: GameCharacter) {
         wisdom = character.wisdom
         charisma = character.charisma
     }
-
 
     fun saveCharacter() {
         character.name = nome
@@ -227,7 +225,6 @@ fun AtributosScreen(character: GameCharacter) {
                             resetAttributes()
                             selectedRace = HumanRace()
                             character.race = selectedRace
-                            updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
                         text = { Text("Human") }
@@ -237,7 +234,6 @@ fun AtributosScreen(character: GameCharacter) {
                             resetAttributes()
                             selectedRace = ElfRace()
                             character.race = selectedRace
-                            updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
                         text = { Text("Elf") }
@@ -247,7 +243,6 @@ fun AtributosScreen(character: GameCharacter) {
                             resetAttributes()
                             selectedRace = OrcRace()
                             character.race = selectedRace
-                            updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
                         text = { Text("Orc") }
@@ -257,7 +252,6 @@ fun AtributosScreen(character: GameCharacter) {
                             resetAttributes()
                             selectedRace = DwarfRace()
                             character.race = selectedRace
-                            updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
                         text = { Text("Dwarf") }
@@ -267,7 +261,6 @@ fun AtributosScreen(character: GameCharacter) {
                             resetAttributes()
                             selectedRace = DragonbornRace()
                             character.race = selectedRace
-                            updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
                         text = { Text("Dragonborn") }
@@ -277,7 +270,6 @@ fun AtributosScreen(character: GameCharacter) {
                             resetAttributes()
                             selectedRace = HalflingRace()
                             character.race = selectedRace
-                            updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
                         text = { Text("Halfling") }
@@ -287,7 +279,6 @@ fun AtributosScreen(character: GameCharacter) {
                             resetAttributes()
                             selectedRace = TieflingRace()
                             character.race = selectedRace
-                            updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
                         text = { Text("Tiefling") }
@@ -297,14 +288,12 @@ fun AtributosScreen(character: GameCharacter) {
                             resetAttributes()
                             selectedRace = GnomeRace()
                             character.race = selectedRace
-                            updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
                         text = { Text("Gnome") }
                     )
                 }
             }
-
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -314,36 +303,42 @@ fun AtributosScreen(character: GameCharacter) {
                 AtributoControl(
                     nomeAtributo = "Força",
                     valor = strength,
+                    cost = calculateCost(strength + 1), // Custo para aumentar a Força
                     onIncrease = { increaseAttribute("strength") },
                     onDecrease = { decreaseAttribute("strength") }
                 )
                 AtributoControl(
                     nomeAtributo = "Destreza",
                     valor = dexterity,
+                    cost = calculateCost(dexterity + 1), // Custo para aumentar a Destreza
                     onIncrease = { increaseAttribute("dexterity") },
                     onDecrease = { decreaseAttribute("dexterity") }
                 )
                 AtributoControl(
                     nomeAtributo = "Constituição",
                     valor = constitution,
+                    cost = calculateCost(constitution + 1), // Custo para aumentar a Constituição
                     onIncrease = { increaseAttribute("constitution") },
                     onDecrease = { decreaseAttribute("constitution") }
                 )
                 AtributoControl(
                     nomeAtributo = "Inteligência",
                     valor = intelligence,
+                    cost = calculateCost(intelligence + 1), // Custo para aumentar a Inteligência
                     onIncrease = { increaseAttribute("intelligence") },
                     onDecrease = { decreaseAttribute("intelligence") }
                 )
                 AtributoControl(
                     nomeAtributo = "Sabedoria",
                     valor = wisdom,
+                    cost = calculateCost(wisdom + 1), // Custo para aumentar a Sabedoria
                     onIncrease = { increaseAttribute("wisdom") },
                     onDecrease = { decreaseAttribute("wisdom") }
                 )
                 AtributoControl(
                     nomeAtributo = "Carisma",
                     valor = charisma,
+                    cost = calculateCost(charisma + 1), // Custo para aumentar o Carisma
                     onIncrease = { increaseAttribute("charisma") },
                     onDecrease = { decreaseAttribute("charisma") }
                 )
@@ -353,7 +348,8 @@ fun AtributosScreen(character: GameCharacter) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Button(onClick = { saveCharacter() }) {
+                Button(onClick = { saveCharacter()
+                                   updateAttributesBasedOnRace() }) {
                     Text("Salvar Personagem")
                 }
                 Button(onClick = {
@@ -378,13 +374,14 @@ fun AtributosScreen(character: GameCharacter) {
 }
 
 @Composable
-fun AtributoControl(nomeAtributo: String, valor: Int, onIncrease: () -> Unit, onDecrease: () -> Unit) {
+fun AtributoControl(nomeAtributo: String, valor: Int, cost: Int, onIncrease: () -> Unit, onDecrease: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(nomeAtributo, modifier = Modifier.weight(1f).padding(end = 16.dp))
+        Text("Custo: $cost", modifier = Modifier.padding(end = 16.dp)) // Exibe o custo
         Button(onClick = onDecrease, modifier = Modifier.width(50.dp)) {
             Text("-")
         }
