@@ -4,29 +4,32 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import up.ddm.Atributos
-import up.ddm.Personagem
+import up.ddm.GameCharacter
 
-@Database(entities = [Atributos::class, Personagem::class], version = 2, exportSchema = false)
-abstract class AtributosDB: RoomDatabase() {
+@Database(entities = [Atributos::class, GameCharacter::class], version = 2, exportSchema = false)
+@TypeConverters(RaceTypeConverter::class)
+abstract class AtributosDB : RoomDatabase() {
 
     abstract fun atributosDAO(): AtributosDAO
     abstract fun personagemDAO(): PersonagemDAO
 
-    companion object{
-
+    companion object {
         @Volatile
-        private var INSTANCIA: AtributosDB? =null
+        private var INSTANCE: AtributosDB? = null
 
-        fun getDatabase(context: Context): AtributosDB{
-            return INSTANCIA ?: synchronized(this){
-                val instancia = Room.databaseBuilder(
+        fun getDatabase(context: Context): AtributosDB {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AtributosDB::class.java,
                     "atributosDB"
-                ).fallbackToDestructiveMigration().build()
-                INSTANCIA = instancia
-                return instancia
+                )
+                    .fallbackToDestructiveMigration() // Consider removing this in production
+                    .build()
+                INSTANCE = instance
+                instance
             }
         }
     }

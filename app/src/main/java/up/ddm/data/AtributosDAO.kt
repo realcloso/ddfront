@@ -17,4 +17,7 @@ interface AtributosDAO {
 
     @Delete
     suspend fun delete(atributos: Atributos)
+
+    @Query("SELECT * FROM atributos WHERE id = :id")
+    suspend fun getAtributosById(id: Int): Atributos?
 }
