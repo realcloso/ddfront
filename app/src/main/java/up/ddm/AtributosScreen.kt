@@ -1,47 +1,56 @@
-package up.ddm.ui
+package up.ddm
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import strategies.*
-import up.ddm.Atributos
-import up.ddm.GameCharacter
-import up.ddm.data.PersonagemDAO
 import usecases.AttributeCosts
 
 @Composable
-fun AtributosScreen(
-    atributos: Atributos,
-    gameCharacter: GameCharacter,
-    onSaveAtributos: () -> Unit,
-    personagemDAO: PersonagemDAO, // Injecting DAO
-    onDeletePersonagem: (GameCharacter) -> Unit,
-    onSalvarPersonagem: () -> Unit
-) {
-    var nome by remember { mutableStateOf(gameCharacter.nome) }
-    var strength by remember { mutableStateOf(gameCharacter.strength) }
-    var dexterity by remember { mutableStateOf(gameCharacter.dexterity) }
-    var constitution by remember { mutableStateOf(gameCharacter.constitution) }
-    var intelligence by remember { mutableStateOf(gameCharacter.intelligence) }
-    var wisdom by remember { mutableStateOf(gameCharacter.wisdom) }
-    var charisma by remember { mutableStateOf(gameCharacter.charisma) }
-    var selectedRace by remember { mutableStateOf(gameCharacter.race) }
+fun AtributosScreen(character: GameCharacter) {
+    var nome by remember { mutableStateOf(character.name) }
+    var strength by remember { mutableStateOf(character.strength) }
+    var dexterity by remember { mutableStateOf(character.dexterity) }
+    var constitution by remember { mutableStateOf(character.constitution) }
+    var intelligence by remember { mutableStateOf(character.intelligence) }
+    var wisdom by remember { mutableStateOf(character.wisdom) }
+    var charisma by remember { mutableStateOf(character.charisma) }
+    var selectedRace by remember { mutableStateOf(character.race) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
     var availablePoints by remember { mutableStateOf(27) }
-    val coroutineScope = rememberCoroutineScope()
+    var isCharacterSaved by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    fun resetAttributes() {
+        strength = 8
+        dexterity = 8
+        constitution = 8
+        intelligence = 8
+        wisdom = 8
+        charisma = 8
+
+        character.strength = strength
+        character.dexterity = dexterity
+        character.constitution = constitution
+        character.intelligence = intelligence
+        character.wisdom = wisdom
+        character.charisma = charisma
+
+        availablePoints = 27
+    }
+
+    LaunchedEffect(Unit) {
+        resetAttributes()
+    }
+
 
     fun calculateCost(value: Int): Int {
         return AttributeCosts.costs[value] ?: 0
@@ -64,27 +73,27 @@ fun AtributosScreen(
             when (attribute) {
                 "strength" -> {
                     strength += 1
-                    gameCharacter.strength = strength
+                    character.strength = strength
                 }
                 "dexterity" -> {
                     dexterity += 1
-                    gameCharacter.dexterity = dexterity
+                    character.dexterity = dexterity
                 }
                 "constitution" -> {
                     constitution += 1
-                    gameCharacter.constitution = constitution
+                    character.constitution = constitution
                 }
                 "intelligence" -> {
                     intelligence += 1
-                    gameCharacter.intelligence = intelligence
+                    character.intelligence = intelligence
                 }
                 "wisdom" -> {
                     wisdom += 1
-                    gameCharacter.wisdom = wisdom
+                    character.wisdom = wisdom
                 }
                 "charisma" -> {
                     charisma += 1
-                    gameCharacter.charisma = charisma
+                    character.charisma = charisma
                 }
             }
         } else {
@@ -109,34 +118,33 @@ fun AtributosScreen(
             when (attribute) {
                 "strength" -> {
                     strength -= 1
-                    gameCharacter.strength = strength
+                    character.strength = strength
                 }
                 "dexterity" -> {
                     dexterity -= 1
-                    gameCharacter.dexterity = dexterity
+                    character.dexterity = dexterity
                 }
                 "constitution" -> {
                     constitution -= 1
-                    gameCharacter.constitution = constitution
+                    character.constitution = constitution
                 }
                 "intelligence" -> {
                     intelligence -= 1
-                    gameCharacter.intelligence = intelligence
+                    character.intelligence = intelligence
                 }
                 "wisdom" -> {
                     wisdom -= 1
-                    gameCharacter.wisdom = wisdom
+                    character.wisdom = wisdom
                 }
                 "charisma" -> {
                     charisma -= 1
-                    gameCharacter.charisma = charisma
+                    character.charisma = charisma
                 }
             }
         }
     }
 
     fun updateAttributesBasedOnRace() {
-        // Reseta os atributos para o valor base de 8
         strength = 8
         dexterity = 8
         constitution = 8
@@ -144,37 +152,27 @@ fun AtributosScreen(
         wisdom = 8
         charisma = 8
 
-        // Aplica os bônus da raça ao gameCharacter
-        selectedRace.applyRaceBonus(gameCharacter)
+        selectedRace.applyRaceBonus(character)
 
-        // Atualiza os valores de atributos na tela com base no gameCharacter
-        strength = gameCharacter.strength
-        dexterity = gameCharacter.dexterity
-        constitution = gameCharacter.constitution
-        intelligence = gameCharacter.intelligence
-        wisdom = gameCharacter.wisdom
-        charisma = gameCharacter.charisma
+        strength = character.strength
+        dexterity = character.dexterity
+        constitution = character.constitution
+        intelligence = character.intelligence
+        wisdom = character.wisdom
+        charisma = character.charisma
     }
 
-    fun resetAttributes() {
-        // Reseta todos os atributos para o valor base de 8
-        strength = 8
-        dexterity = 8
-        constitution = 8
-        intelligence = 8
-        wisdom = 8
-        charisma = 8
 
-        // Atualiza o objeto gameCharacter com os valores resetados
-        gameCharacter.strength = strength
-        gameCharacter.dexterity = dexterity
-        gameCharacter.constitution = constitution
-        gameCharacter.intelligence = intelligence
-        gameCharacter.wisdom = wisdom
-        gameCharacter.charisma = charisma
-
-        // Reseta os pontos disponíveis para 27
-        availablePoints = 27
+    fun saveCharacter() {
+        character.name = nome
+        character.strength = strength
+        character.dexterity = dexterity
+        character.constitution = constitution
+        character.intelligence = intelligence
+        character.wisdom = wisdom
+        character.charisma = charisma
+        isCharacterSaved = true
+        snackbarMessage = "Personagem salvo com sucesso!"
     }
 
     Scaffold(
@@ -199,7 +197,7 @@ fun AtributosScreen(
                 value = nome,
                 onValueChange = {
                     nome = it
-                    gameCharacter.nome = it
+                    character.name = it
                 },
                 label = { Text("Nome do Personagem") },
                 modifier = Modifier.fillMaxWidth()
@@ -210,16 +208,25 @@ fun AtributosScreen(
                     .fillMaxWidth()
                     .clickable { isDropdownExpanded = !isDropdownExpanded }
             ) {
-                Text("Raça: ${selectedRace.javaClass.simpleName}")
+                Text("Raça: ${selectedRace.javaClass.simpleName ?: "Escolha uma raça"}") // Exibe a raça ou a opção padrão
+
                 DropdownMenu(
                     expanded = isDropdownExpanded,
                     onDismissRequest = { isDropdownExpanded = false }
                 ) {
+                    // Opção padrão não selecionável
+                    DropdownMenuItem(
+                        enabled = false, // Desabilita a seleção desta opção
+                        onClick = { /* Nenhuma ação ao clicar */ },
+                        text = { Text("Escolha uma raça") }
+                    )
+
+                    // Opções de raça
                     DropdownMenuItem(
                         onClick = {
                             resetAttributes()
                             selectedRace = HumanRace()
-                            gameCharacter.race = selectedRace
+                            character.race = selectedRace
                             updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
@@ -229,7 +236,7 @@ fun AtributosScreen(
                         onClick = {
                             resetAttributes()
                             selectedRace = ElfRace()
-                            gameCharacter.race = selectedRace
+                            character.race = selectedRace
                             updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
@@ -239,7 +246,7 @@ fun AtributosScreen(
                         onClick = {
                             resetAttributes()
                             selectedRace = OrcRace()
-                            gameCharacter.race = selectedRace
+                            character.race = selectedRace
                             updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
@@ -249,7 +256,7 @@ fun AtributosScreen(
                         onClick = {
                             resetAttributes()
                             selectedRace = DwarfRace()
-                            gameCharacter.race = selectedRace
+                            character.race = selectedRace
                             updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
@@ -259,7 +266,7 @@ fun AtributosScreen(
                         onClick = {
                             resetAttributes()
                             selectedRace = DragonbornRace()
-                            gameCharacter.race = selectedRace
+                            character.race = selectedRace
                             updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
@@ -269,7 +276,7 @@ fun AtributosScreen(
                         onClick = {
                             resetAttributes()
                             selectedRace = HalflingRace()
-                            gameCharacter.race = selectedRace
+                            character.race = selectedRace
                             updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
@@ -279,7 +286,7 @@ fun AtributosScreen(
                         onClick = {
                             resetAttributes()
                             selectedRace = TieflingRace()
-                            gameCharacter.race = selectedRace
+                            character.race = selectedRace
                             updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
@@ -289,7 +296,7 @@ fun AtributosScreen(
                         onClick = {
                             resetAttributes()
                             selectedRace = GnomeRace()
-                            gameCharacter.race = selectedRace
+                            character.race = selectedRace
                             updateAttributesBasedOnRace()
                             isDropdownExpanded = false
                         },
@@ -298,9 +305,10 @@ fun AtributosScreen(
                 }
             }
 
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally, // Alinhamento horizontal aplicado diretamente na Column
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 AtributoControl(
@@ -345,16 +353,24 @@ fun AtributosScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Button(onClick = {
-                    coroutineScope.launch {
-                        personagemDAO.insert(gameCharacter)
-                        onSalvarPersonagem()
-                    }
-                }) {
+                Button(onClick = { saveCharacter() }) {
                     Text("Salvar Personagem")
                 }
-                Button(onClick = { onDeletePersonagem(gameCharacter) }) {
-                    Text("Deletar Personagem")
+                Button(onClick = {
+                    // Iniciar nova activity para mostrar personagem
+                    val intent = Intent(context, ShowCharacterActivity::class.java).apply {
+                        putExtra("CHARACTER_NAME", character.name)
+                        putExtra("CHARACTER_STRENGTH", character.strength)
+                        putExtra("CHARACTER_DEXTERITY", character.dexterity)
+                        putExtra("CHARACTER_CONSTITUTION", character.constitution)
+                        putExtra("CHARACTER_INTELLIGENCE", character.intelligence)
+                        putExtra("CHARACTER_WISDOM", character.wisdom)
+                        putExtra("CHARACTER_CHARISMA", character.charisma)
+                        putExtra("CHARACTER_RACE", selectedRace.javaClass.simpleName)
+                    }
+                    context.startActivity(intent)
+                }) {
+                    Text("Mostrar Personagem")
                 }
             }
         }
@@ -362,26 +378,18 @@ fun AtributosScreen(
 }
 
 @Composable
-fun AtributoControl(
-    nomeAtributo: String,
-    valor: Int,
-    onIncrease: () -> Unit,
-    onDecrease: () -> Unit,
-) {
+fun AtributoControl(nomeAtributo: String, valor: Int, onIncrease: () -> Unit, onDecrease: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "$nomeAtributo: $valor",
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f)
-        )
-        Button(onClick = onDecrease) {
+        Text(nomeAtributo, modifier = Modifier.weight(1f).padding(end = 16.dp))
+        Button(onClick = onDecrease, modifier = Modifier.width(50.dp)) {
             Text("-")
         }
-        Button(onClick = onIncrease) {
+        Text(valor.toString(), modifier = Modifier.width(50.dp), textAlign = TextAlign.Center)
+        Button(onClick = onIncrease, modifier = Modifier.width(50.dp)) {
             Text("+")
         }
     }

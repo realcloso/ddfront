@@ -25,15 +25,9 @@
             </intent-filter>
         </activity>
 
-        <!-- Register MainActivity -->
+        <!-- Add ShowCharacterActivity -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.DdmFrontJetpackCompose" />
-
-        <activity
-            android:name=".CharacterListActivity"
+            android:name=".ShowCharacterActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.DdmFrontJetpackCompose" />
