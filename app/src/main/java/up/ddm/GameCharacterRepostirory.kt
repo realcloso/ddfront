@@ -1,5 +1,8 @@
 package up.ddm
 
+import kotlinx.coroutines.flow.Flow
+
+
 class GameCharacterRepository(private val gameCharacterDao: GameCharacterDao) {
     suspend fun insert(character: GameCharacterEntity) {
         gameCharacterDao.insertCharacter(character)
@@ -14,10 +17,10 @@ class GameCharacterRepository(private val gameCharacterDao: GameCharacterDao) {
     }
 
     suspend fun getCharacterById(id: Int): GameCharacterEntity? {
-        return gameCharacterDao.getCharacterById(id)
+        return gameCharacterDao.fetchCharacterById(id)
     }
 
-    suspend fun getAllCharacters(): List<GameCharacterEntity> {
-        return gameCharacterDao.getAllCharacters()
+    fun getAllCharacters(): Flow<List<GameCharacterEntity>> {
+        return gameCharacterDao.fetchAllCharacters()
     }
 }

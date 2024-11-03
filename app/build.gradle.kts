@@ -57,6 +57,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.runtime.livedata)
     //room dependencias
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
@@ -64,9 +65,18 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
 
-//    inclusao automatica do android studio para room
-//    implementation(libs.androidx.room.common)
-//    implementation(libs.androidx.room.kapt)
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1") // Adicionando ViewModel
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+
+    // Jetpack Compose dependencies
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.material3)
+
+    implementation (libs.ui)
+    implementation (libs.material3)
+    implementation (libs.ui.tooling.preview)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

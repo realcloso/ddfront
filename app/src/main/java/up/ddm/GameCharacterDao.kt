@@ -1,6 +1,7 @@
 package up.ddm
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GameCharacterDao {
@@ -14,8 +15,11 @@ interface GameCharacterDao {
     suspend fun deleteCharacter(character: GameCharacterEntity)
 
     @Query("SELECT * FROM game_characters WHERE id = :id")
-    suspend fun getCharacterById(id: Int): GameCharacterEntity?
+    suspend fun fetchCharacterById(id: Int): GameCharacterEntity?
 
     @Query("SELECT * FROM game_characters")
-    suspend fun getAllCharacters(): List<GameCharacterEntity>
+    fun fetchAllCharacters(): Flow<List<GameCharacterEntity>>
+
+    @Query("SELECT COUNT(*) FROM game_characters")
+    suspend fun countCharacters(): Int
 }

@@ -7,13 +7,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import up.ddm.GameCharacter
 import strategies.HumanRace
-import up.ddm.AtributosScreen
 
 @Composable
 fun HomeScreen(
-    onCreateCharacter: (GameCharacter) -> Unit
+    onCreateCharacter: (GameCharacter) -> Unit,
+    onNavigateToCharacterList: () -> Unit // Adiciona a função de navegação
 ) {
     var showAtributosScreen by remember { mutableStateOf(false) }
 
@@ -27,7 +26,7 @@ fun HomeScreen(
             intelligence = 8,
             wisdom = 8,
             charisma = 8,
-            race = HumanRace() // Define uma raça inicial, pode ser alterada conforme necessário
+            race = HumanRace() // Define uma raça inicial
         )
         AtributosScreen(character = newCharacter)
     } else {
@@ -51,6 +50,18 @@ fun HomeScreen(
             ) {
                 Text("Criar Novo Personagem")
             }
+
+            Spacer(modifier = Modifier.height(16.dp)) // Espaçamento entre os botões
+
+            Button(
+                onClick = {
+                    // Navegar para a tela de lista de personagens
+                    onNavigateToCharacterList()
+                }
+            ) {
+                Text("Consultar Personagens")
+            }
         }
     }
 }
+
