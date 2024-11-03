@@ -10,6 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class CharacterDetailActivity : ComponentActivity() {
 
@@ -18,7 +20,7 @@ class CharacterDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Set up the DAO, repository, and ViewModel as in CharacterListActivity
+        // Set up the DAO, repository, and ViewModel
         val database = AppDatabase.getDatabase(this)
         val gameCharacterDao = database.gameCharacterDao()
         val repository = GameCharacterRepository(gameCharacterDao)
@@ -49,16 +51,20 @@ class CharacterDetailActivity : ComponentActivity() {
 fun CharacterDetailScreen(viewModel: GameCharacterViewModel, characterId: Int, onEditCharacter: (GameCharacterEntity) -> Unit) {
     var character by remember { mutableStateOf<GameCharacterEntity?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
 
-    // Fetch character details once the composable is displayed
+    // Fetch character details every second while the composable is displayed
     LaunchedEffect(characterId) {
-        viewModel.getCharacterById(characterId) { result ->
-            if (result != null) {
-                character = result
-                errorMessage = null
-            } else {
-                errorMessage = "Personagem não encontrado."
+        while (true) {
+            viewModel.getCharacterById(characterId) { result ->
+                if (result != null) {
+                    character = result
+                    errorMessage = null
+                } else {
+                    errorMessage = "Personagem não encontrado."
+                }
             }
+            delay(1000) // Wait for 1 second before the next fetch
         }
     }
 

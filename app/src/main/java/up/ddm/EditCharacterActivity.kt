@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package up.ddm
 
 import android.os.Bundle
@@ -40,15 +42,8 @@ class EditCharacterActivity : ComponentActivity() {
 @Composable
 fun EditCharacterScreen(character: GameCharacterEntity, viewModel: GameCharacterViewModel, onEditComplete: () -> Unit) {
     var name by remember { mutableStateOf(character.name) }
-    var race by remember { mutableStateOf(character.race) }
-    var level by remember { mutableStateOf(character.level) }
-    var strength by remember { mutableStateOf(character.strength) }
-    var dexterity by remember { mutableStateOf(character.dexterity) }
-    var constitution by remember { mutableStateOf(character.constitution) }
-    var intelligence by remember { mutableStateOf(character.intelligence) }
-    var wisdom by remember { mutableStateOf(character.wisdom) }
-    var charisma by remember { mutableStateOf(character.charisma) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
 
     Column(
         modifier = Modifier
@@ -64,68 +59,12 @@ fun EditCharacterScreen(character: GameCharacterEntity, viewModel: GameCharacter
             label = { Text("Name") }
         )
 
-        OutlinedTextField(
-            value = race,
-            onValueChange = { race = it },
-            label = { Text("Race") }
-        )
-
-        OutlinedTextField(
-            value = level.toString(),
-            onValueChange = { level = it.toIntOrNull() ?: level },
-            label = { Text("Level") }
-        )
-
-        OutlinedTextField(
-            value = strength.toString(),
-            onValueChange = { strength = it.toIntOrNull() ?: strength },
-            label = { Text("Strength") }
-        )
-
-        OutlinedTextField(
-            value = dexterity.toString(),
-            onValueChange = { dexterity = it.toIntOrNull() ?: dexterity },
-            label = { Text("Dexterity") }
-        )
-
-        OutlinedTextField(
-            value = constitution.toString(),
-            onValueChange = { constitution = it.toIntOrNull() ?: constitution },
-            label = { Text("Constitution") }
-        )
-
-        OutlinedTextField(
-            value = intelligence.toString(),
-            onValueChange = { intelligence = it.toIntOrNull() ?: intelligence },
-            label = { Text("Intelligence") }
-        )
-
-        OutlinedTextField(
-            value = wisdom.toString(),
-            onValueChange = { wisdom = it.toIntOrNull() ?: wisdom },
-            label = { Text("Wisdom") }
-        )
-
-        OutlinedTextField(
-            value = charisma.toString(),
-            onValueChange = { charisma = it.toIntOrNull() ?: charisma },
-            label = { Text("Charisma") }
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
             // Create a new GameCharacterEntity with updated values
             val updatedCharacter = character.copy(
-                name = name,
-                race = race,
-                level = level,
-                strength = strength,
-                dexterity = dexterity,
-                constitution = constitution,
-                intelligence = intelligence,
-                wisdom = wisdom,
-                charisma = charisma
+                name = name
             )
 
             // Save the updated character using the ViewModel
@@ -137,7 +76,7 @@ fun EditCharacterScreen(character: GameCharacterEntity, viewModel: GameCharacter
                 }
             }
         }) {
-            Text("Save Changes")
+            Text("Salvar mudanças")
         }
 
         if (errorMessage != null) {
