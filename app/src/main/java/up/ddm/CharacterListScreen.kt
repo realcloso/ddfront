@@ -4,12 +4,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun CharacterListScreen(
@@ -22,7 +26,7 @@ fun CharacterListScreen(
 
     // Load characters when the screen is first displayed
     LaunchedEffect(Unit) {
-        viewModel.getAllCharacters() // Correção: removido o parâmetro
+        viewModel.getAllCharacters()
     }
 
     // Display the UI
@@ -43,9 +47,11 @@ fun CharacterListScreen(
             else -> {
                 LazyColumn {
                     items(charactersState) { character ->
-                        CharacterListItem(character) {
-                            onNavigateToCharacterDetail(character) // Navegar para a tela de detalhes do personagem
-                        }
+                        CharacterListItem(
+                            character,
+                            onClick = { onNavigateToCharacterDetail(character) },
+                            onDeleteClick = { viewModel.delete(character) } // Delete character on icon click
+                        )
                     }
                 }
             }
@@ -53,19 +59,42 @@ fun CharacterListScreen(
     }
 }
 
-
 @Composable
-fun CharacterListItem(character: GameCharacterEntity, onClick: () -> Unit) {
+fun CharacterListItem(
+    character: GameCharacterEntity,
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(8.dp)
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Nome: ${character.name}")
-            Text("Raça: ${character.race}")
-            Text("Nível: ${character.level}")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text("Nome: ${character.name}", fontSize = 20.sp, style = MaterialTheme.typography.titleLarge)
+                Text("Raça: ${character.race}", style = MaterialTheme.typography.bodyMedium)
+                Text("Nível: ${character.level}", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            IconButton(
+                onClick = onDeleteClick,
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "Delete Character",
+                    tint = Color.Red
+                )
+            }
         }
     }
 }
