@@ -1,4 +1,4 @@
-package up.ddm.ui
+package up.ddm
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button

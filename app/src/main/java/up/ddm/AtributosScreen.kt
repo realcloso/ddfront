@@ -1,6 +1,7 @@
 package up.ddm
 
 import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -10,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import strategies.*
 import usecases.AttributeCosts
 
@@ -28,6 +31,10 @@ fun AtributosScreen(character: GameCharacter) {
     var availablePoints by remember { mutableStateOf(27) }
     var isCharacterSaved by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val database = AppDatabase.getDatabase(context)
+    val repository = GameCharacterRepository(database.gameCharacterDao())
+
 
     fun resetAttributes() {
         strength = 8
@@ -171,7 +178,19 @@ fun AtributosScreen(character: GameCharacter) {
         character.charisma = charisma
         isCharacterSaved = true
         snackbarMessage = "Personagem salvo com sucesso!"
+
+        // Inserindo o personagem no banco de dados
+        (context as? ComponentActivity)?.lifecycleScope?.launch {
+            try {
+                // Converte `character` para `GameCharacterEntity` e insere no banco
+                repository.insert(character.toEntity())
+
+            } catch (e: Exception) {
+                snackbarMessage = "Erro ao salvar personagem: ${e.message}"
+            }
+        }
     }
+
 
     Scaffold(
         snackbarHost = {

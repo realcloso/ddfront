@@ -3,7 +3,7 @@ package up.ddm
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import up.ddm.ui.HomeScreen
+import up.ddm.HomeScreen
 
 class HomeActivity : ComponentActivity() {
 

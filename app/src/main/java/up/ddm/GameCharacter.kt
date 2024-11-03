@@ -24,3 +24,21 @@ class GameCharacter(
         race.applyRaceBonus(this)
     }
 }
+
+// Função de extensão para converter GameCharacter em GameCharacterEntity
+fun GameCharacter.toEntity(): GameCharacterEntity {
+    return GameCharacterEntity(
+        name = this.name,
+        strength = this.strength,
+        dexterity = this.dexterity,
+        constitution = this.constitution,
+        intelligence = this.intelligence,
+        wisdom = this.wisdom,
+        charisma = this.charisma,
+        experiencePoints = this.experiencePoints,
+        level = this.level,
+        lifePoints = this.lifePoints,
+        race = RaceNameConverter.toRaceName(this.race), // Convertendo a raça para string
+        active = this.active
+    )
+}
