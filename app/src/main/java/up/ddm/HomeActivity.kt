@@ -25,7 +25,15 @@ class HomeActivity : ComponentActivity() {
             HomeScreen(
                 onCreateCharacter = { newCharacter ->
                     println("Character created: ${newCharacter.name}!")
-                    viewModel.insert(newCharacter.toEntity()) // Convert to GameCharacterEntity
+                    viewModel.insert(newCharacter.toEntity()) { success ->
+                        if (success) {
+                            // Handle success, e.g., show a toast or update UI
+                            println("Character inserted successfully.")
+                        } else {
+                            // Handle failure, e.g., show an error message
+                            println("Failed to insert character.")
+                        }
+                    }
                 },
                 onNavigateToCharacterList = {
                     // Navigate to the character list screen

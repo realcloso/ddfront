@@ -50,7 +50,15 @@ fun CharacterListScreen(
                         CharacterListItem(
                             character,
                             onClick = { onNavigateToCharacterDetail(character) },
-                            onDeleteClick = { viewModel.delete(character) } // Delete character on icon click
+                            onDeleteClick = {
+                                viewModel.delete(character) { success ->
+                                    if (success) {
+                                        // Handle successful deletion, e.g., show a toast
+                                    } else {
+                                        // Handle failure, e.g., show an error message
+                                    }
+                                }
+                            }
                         )
                     }
                 }
@@ -98,3 +106,4 @@ fun CharacterListItem(
         }
     }
 }
+

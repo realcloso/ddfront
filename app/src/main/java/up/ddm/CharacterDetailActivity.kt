@@ -1,14 +1,10 @@
 package up.ddm
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -34,7 +30,13 @@ class CharacterDetailActivity : ComponentActivity() {
 
         setContent {
             if (characterId != -1) {
-                CharacterDetailScreen(viewModel, characterId)
+                CharacterDetailScreen(viewModel, characterId) { character ->
+                    // Navigate to EditCharacterActivity when character is clicked
+                    val intent = Intent(this@CharacterDetailActivity, EditCharacterActivity::class.java).apply {
+                        putExtra("CHARACTER_DATA", character) // Ensure GameCharacterEntity implements Parcelable
+                    }
+                    startActivity(intent)
+                }
             } else {
                 // Display an error if no valid character ID was provided
                 Text("Personagem não encontrado.", modifier = Modifier.padding(16.dp))
@@ -44,7 +46,7 @@ class CharacterDetailActivity : ComponentActivity() {
 }
 
 @Composable
-fun CharacterDetailScreen(viewModel: GameCharacterViewModel, characterId: Int) {
+fun CharacterDetailScreen(viewModel: GameCharacterViewModel, characterId: Int, onEditCharacter: (GameCharacterEntity) -> Unit) {
     var character by remember { mutableStateOf<GameCharacterEntity?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
@@ -85,7 +87,8 @@ fun CharacterDetailScreen(viewModel: GameCharacterViewModel, characterId: Int) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(onClick = {
-                    // Action for editing the character or returning to the list
+                    // Notify that the edit action is to be performed
+                    onEditCharacter(it)
                 }) {
                     Text("Editar Personagem")
                 }
