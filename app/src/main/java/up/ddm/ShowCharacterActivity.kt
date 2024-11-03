@@ -1,9 +1,11 @@
 package up.ddm
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +29,6 @@ class ShowCharacterActivity : ComponentActivity() {
             val characterLevel = intent.getIntExtra("CHARACTER_LEVEL", 1)
             val characterRace = intent.getStringExtra("CHARACTER_RACE") ?: "Desconhecida"
 
-            // Calcular os pontos de vida com base na Constituição
             val characterLifePoints = calculateLifePoints(characterConstitution)
 
             ShowCharacterScreen(
@@ -42,15 +43,18 @@ class ShowCharacterActivity : ComponentActivity() {
                 characterLevel,
                 characterLifePoints,
                 characterRace
-            )
+            ) {
+                // Navigate to HomeActivity instead of HomeScreen
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish() // Optionally close the current activity
+            }
         }
     }
 
     private fun calculateLifePoints(constitution: Int): Int {
-        // Obtém o modificador da Constituição
         val constitutionModifier = AttributeModifiers.modifiers[constitution] ?: 0
-        // Cálculo dos pontos de vida
-        return 10 + constitutionModifier // Base de 10 pontos de vida + modificador
+        return 10 + constitutionModifier
     }
 }
 
@@ -66,7 +70,8 @@ fun ShowCharacterScreen(
     experiencePoints: Int,
     level: Int,
     lifePoints: Int,
-    race: String
+    race: String,
+    onBackToHomeClick: () -> Unit // Add a callback parameter for the button
 ) {
     Column(
         modifier = Modifier
@@ -87,5 +92,11 @@ fun ShowCharacterScreen(
         Text("Pontos de Vida: $lifePoints")
         Text("Nível: $level")
         Text("Experiência: $experiencePoints")
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = onBackToHomeClick) {
+            Text("Menu Principal")
+        }
     }
 }
